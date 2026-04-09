@@ -12,14 +12,14 @@
 :root{
   --bg:#fafafa;
   --fg:#111;
-  --muted:#888;
+  --muted:#999;
   --accent-r:#ff2d2d;
   --accent-g:#00e676;
   --accent-b:#2979ff;
   --mono:"DM Mono",monospace;
   --serif:"Cormorant Garamond",serif;
 }
-html{scroll-behavior:auto;overflow-x:hidden}
+html{overflow-x:hidden}
 body{
   background:var(--bg);
   color:var(--fg);
@@ -27,32 +27,63 @@ body{
   line-height:1.6;
   overflow-x:hidden;
 }
+
+/* ── CANVAS ── */
 #three-canvas{
   position:fixed;
   top:0;left:0;
   width:100vw;height:100vh;
   z-index:1;
-  pointer-events:none;
+  pointer-events:auto;
+  cursor:grab;
 }
+#three-canvas:active{cursor:grabbing}
+
+/* ── SCROLL CONTAINER ── */
 #scroll-container{
   position:relative;
   z-index:2;
 }
+
+/* ── ACT SECTIONS ── */
 .act-section{
-  min-height:200vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  min-height:250vh;
   position:relative;
-  padding:0 8vw;
+  display:flex;
+  align-items:flex-start;
+  padding:0;
 }
 .act-section:first-child{min-height:100vh}
-.act-section:last-child{min-height:100vh}
+.act-section:last-child{min-height:120vh}
+
+/* ── TEXT PANEL (pinned to left or right) ── */
+.act-text-panel{
+  position:sticky;
+  top:0;
+  height:100vh;
+  width:45vw;
+  display:flex;
+  align-items:center;
+  padding:0 5vw;
+  z-index:3;
+  background:var(--bg);
+}
+/* Odd acts: text LEFT, 3D RIGHT */
+.act-section:nth-child(odd) .act-text-panel{
+  margin-left:0;
+  margin-right:auto;
+}
+/* Even acts: text RIGHT, 3D LEFT */
+.act-section:nth-child(even) .act-text-panel{
+  margin-left:auto;
+  margin-right:0;
+}
+
 .act-content{
-  max-width:520px;
+  max-width:440px;
   opacity:0;
   transform:translateY(40px);
-  transition:opacity .8s ease, transform .8s ease;
+  transition:opacity .9s cubic-bezier(.23,1,.32,1), transform .9s cubic-bezier(.23,1,.32,1);
 }
 .act-content.visible{
   opacity:1;
@@ -60,11 +91,11 @@ body{
 }
 .act-label{
   font-family:var(--mono);
-  font-size:.7rem;
-  letter-spacing:.3em;
+  font-size:.65rem;
+  letter-spacing:.35em;
   text-transform:uppercase;
   color:var(--muted);
-  margin-bottom:1rem;
+  margin-bottom:1.2rem;
   display:flex;
   align-items:center;
   gap:.6rem;
@@ -77,36 +108,38 @@ body{
 }
 .act-title{
   font-family:var(--serif);
-  font-size:clamp(2rem,4vw,3.2rem);
+  font-size:clamp(2rem,3.8vw,3.2rem);
   font-weight:300;
-  line-height:1.15;
-  margin-bottom:.4rem;
+  line-height:1.12;
+  margin-bottom:.5rem;
   letter-spacing:-.02em;
 }
 .act-subtitle{
   font-family:var(--mono);
-  font-size:.75rem;
+  font-size:.72rem;
   color:var(--muted);
   margin-bottom:2rem;
   font-weight:300;
 }
 .act-body{
   font-family:var(--serif);
-  font-size:1.1rem;
-  line-height:1.75;
-  color:#333;
-  margin-bottom:2rem;
+  font-size:1.05rem;
+  line-height:1.8;
+  color:#444;
+  margin-bottom:1.8rem;
 }
 .act-anchor{
   font-family:var(--mono);
-  font-size:.8rem;
+  font-size:.75rem;
   font-style:italic;
   color:var(--muted);
   border-left:2px solid var(--accent-b);
   padding-left:1rem;
   display:block;
+  line-height:1.6;
 }
-/* Hero specific */
+
+/* ── HERO ── */
 .hero-section{
   min-height:100vh;
   display:flex;
@@ -114,11 +147,19 @@ body{
   align-items:center;
   justify-content:center;
   text-align:center;
+  padding:0 5vw;
+}
+.hero-section .act-text-panel{
+  position:relative;
+  width:100%;
+  height:auto;
+  justify-content:center;
+  padding:0;
 }
 .hero-title{
   font-family:var(--mono);
-  font-size:clamp(.8rem,1.2vw,1rem);
-  letter-spacing:.6em;
+  font-size:clamp(.75rem,1.1vw,.95rem);
+  letter-spacing:.7em;
   text-transform:uppercase;
   color:var(--muted);
   margin-bottom:2rem;
@@ -127,64 +168,74 @@ body{
 }
 .hero-question{
   font-family:var(--serif);
-  font-size:clamp(2.5rem,6vw,5rem);
+  font-size:clamp(2.5rem,5.5vw,4.8rem);
   font-weight:300;
-  line-height:1.1;
+  line-height:1.08;
   letter-spacing:-.03em;
-  max-width:700px;
+  max-width:680px;
   opacity:0;
-  animation:fadeUp 1.2s ease .6s forwards;
+  animation:fadeUp 1.2s ease .7s forwards;
 }
 .hero-scroll-hint{
   position:absolute;
-  bottom:3rem;
+  bottom:2.5rem;
   font-family:var(--mono);
-  font-size:.65rem;
-  letter-spacing:.2em;
+  font-size:.6rem;
+  letter-spacing:.25em;
   text-transform:uppercase;
   color:var(--muted);
   opacity:0;
-  animation:fadeUp 1.2s ease 1.5s forwards;
+  animation:fadeUp 1.2s ease 1.6s forwards;
   display:flex;
   flex-direction:column;
   align-items:center;
   gap:.5rem;
 }
 .hero-scroll-hint .line{
-  width:1px;height:30px;
+  width:1px;height:28px;
   background:linear-gradient(to bottom,var(--muted),transparent);
   animation:scrollPulse 2s ease infinite;
 }
-/* Epilogue */
-.epilogue-section{text-align:center}
-.epilogue-section .act-content{max-width:600px}
+
+/* ── EPILOGUE ── */
+.epilogue-section .act-text-panel{
+  width:100%;
+  justify-content:center;
+  margin:0 auto;
+}
+.epilogue-section .act-content{
+  max-width:560px;
+  text-align:center;
+}
 .epilogue-title{
   font-family:var(--serif);
-  font-size:clamp(2rem,4vw,3rem);
+  font-size:clamp(1.8rem,3.5vw,2.8rem);
   font-weight:300;
   line-height:1.2;
   margin-bottom:2rem;
 }
+.epilogue-section .act-anchor{
+  border-left:none;
+  padding-left:0;
+  text-align:center;
+}
 
-/* Alignment helpers — alternate left/right */
-.act-section:nth-child(odd) {justify-content:flex-start}
-.act-section:nth-child(even){justify-content:flex-end}
-
-/* Progress indicator */
+/* ── PROGRESS BAR ── */
 #progress-bar{
   position:fixed;
   top:0;left:0;
   width:0;height:2px;
   background:linear-gradient(90deg,var(--accent-r),var(--accent-g),var(--accent-b));
   z-index:100;
-  transition:width .1s linear;
+  transition:width .15s linear;
 }
-/* Act counter */
+
+/* ── ACT COUNTER ── */
 #act-counter{
   position:fixed;
   bottom:2rem;right:2rem;
   font-family:var(--mono);
-  font-size:.65rem;
+  font-size:.6rem;
   letter-spacing:.15em;
   color:var(--muted);
   z-index:100;
@@ -194,19 +245,25 @@ body{
 #act-counter.visible{opacity:1}
 
 @keyframes fadeUp{
-  from{opacity:0;transform:translateY(30px)}
+  from{opacity:0;transform:translateY(25px)}
   to{opacity:1;transform:translateY(0)}
 }
 @keyframes scrollPulse{
-  0%,100%{opacity:.4;transform:scaleY(1)}
-  50%{opacity:1;transform:scaleY(1.2)}
+  0%,100%{opacity:.3;transform:scaleY(1)}
+  50%{opacity:.8;transform:scaleY(1.15)}
 }
 
-/* Responsive */
-@media(max-width:768px){
-  .act-section:nth-child(odd),
-  .act-section:nth-child(even){justify-content:center}
-  .act-section{padding:0 6vw}
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .act-text-panel{
+    width:100vw !important;
+    padding:0 6vw !important;
+    margin:0 !important;
+  }
+  .act-section:nth-child(odd) .act-text-panel,
+  .act-section:nth-child(even) .act-text-panel{
+    margin:0 !important;
+  }
 }
 </style>
 </head>
@@ -230,116 +287,134 @@ body{
 
   <!-- PROLOGO -->
   <section class="act-section" data-act="prologo">
-    <div class="act-content">
-      <div class="act-label">Prologo</div>
-      <h2 class="act-title">Antes da imagem existe luz</h2>
-      <p class="act-body">
-        Antes de existir um ecra. Antes de existir uma camara. Antes de existir sequer a palavra fotografia. Existia luz. A luz batia nas coisas. As coisas refletiam. O olho humano apanhava esse reflexo e construia uma imagem que durava exatamente enquanto estava aberto.
-      </p>
-      <span class="act-anchor">"Toda a imagem comeca com luz. O que muda e o que fazemos com ela."</span>
+    <div class="act-text-panel">
+      <div class="act-content">
+        <div class="act-label">Prologo</div>
+        <h2 class="act-title">Antes da imagem existe luz</h2>
+        <p class="act-body">
+          Antes de existir um ecra. Antes de existir uma camara. Antes de existir sequer a palavra fotografia. Existia luz. A luz batia nas coisas. As coisas refletiam. O olho humano apanhava esse reflexo e construia uma imagem que durava exatamente enquanto estava aberto.
+        </p>
+        <span class="act-anchor">"Toda a imagem comeca com luz. O que muda e o que fazemos com ela."</span>
+      </div>
     </div>
   </section>
 
   <!-- ATO I -->
   <section class="act-section" data-act="luz">
-    <div class="act-content">
-      <div class="act-label">Ato I</div>
-      <h2 class="act-title">A Luz</h2>
-      <div class="act-subtitle">A materia-prima de toda a imagem</div>
-      <p class="act-body">
-        A luz e radiacao electromagnetica. O que percepcionamos como cor nao e uma propriedade das coisas, e o comprimento de onda da luz que elas nao absorvem. O espetro visivel e uma fatia estreita entre 400 e 700 nanometros. A luz tambem e composta por particulas, os fotoes. A colisao entre fotao e materia e o principio fisico de toda a fotografia.
-      </p>
-      <span class="act-anchor">"Tudo comeca com um fotao."</span>
+    <div class="act-text-panel">
+      <div class="act-content">
+        <div class="act-label">Ato I</div>
+        <h2 class="act-title">A Luz</h2>
+        <div class="act-subtitle">A materia-prima de toda a imagem</div>
+        <p class="act-body">
+          A luz e radiacao electromagnetica. O que percepcionamos como cor nao e uma propriedade das coisas, e o comprimento de onda da luz que elas nao absorvem. O espetro visivel e uma fatia estreita entre 400 e 700 nanometros. A luz tambem e composta por particulas, os fotoes. A colisao entre fotao e materia e o principio fisico de toda a fotografia.
+        </p>
+        <span class="act-anchor">"Tudo comeca com um fotao."</span>
+      </div>
     </div>
   </section>
 
   <!-- ATO II -->
   <section class="act-section" data-act="camara">
-    <div class="act-content">
-      <div class="act-label">Ato II</div>
-      <h2 class="act-title">A Camara</h2>
-      <div class="act-subtitle">A caixa que aprendeu a ver</div>
-      <p class="act-body">
-        Ha dois mil anos, alguem fez um buraco numa parede escura e viu o mundo projetado do outro lado. A camara obscura nao foi inventada. Foi descoberta. A distancia focal define como o mundo e visto. A abertura controla a quantidade de luz. Estas nao sao configuracoes tecnicas, sao decisoes sobre como ver o mundo.
-      </p>
-      <span class="act-anchor">"A camara nao cria a imagem. Recolhe a luz que ja existe."</span>
+    <div class="act-text-panel">
+      <div class="act-content">
+        <div class="act-label">Ato II</div>
+        <h2 class="act-title">A Camara</h2>
+        <div class="act-subtitle">A caixa que aprendeu a ver</div>
+        <p class="act-body">
+          Ha dois mil anos, alguem fez um buraco numa parede escura e viu o mundo projetado do outro lado. A camara obscura nao foi inventada. Foi descoberta. A distancia focal define como o mundo e visto. A abertura controla a quantidade de luz. Estas nao sao configuracoes tecnicas, sao decisoes sobre como ver o mundo.
+        </p>
+        <span class="act-anchor">"A camara nao cria a imagem. Recolhe a luz que ja existe."</span>
+      </div>
     </div>
   </section>
 
   <!-- ATO III -->
   <section class="act-section" data-act="pelicula">
-    <div class="act-content">
-      <div class="act-label">Ato III</div>
-      <h2 class="act-title">A Pelicula</h2>
-      <div class="act-subtitle">Cristais de prata, tempo fixado em materia</div>
-      <p class="act-body">
-        A pelicula fotografica e uma camada de gelatina com cristais microscopicos de haleto de prata. Quando os fotoes os atingem, a estrutura electronica altera-se. A imagem analogica e materia. Tem textura, espessura, fragilidade. Pode sobreviver cem anos numa caixa escura. No cinema de 35 mm, cada segundo contem 24 fotogramas.
-      </p>
-      <span class="act-anchor">"Cada fotograma e um fragmento de luz fixado no tempo."</span>
+    <div class="act-text-panel">
+      <div class="act-content">
+        <div class="act-label">Ato III</div>
+        <h2 class="act-title">A Pelicula</h2>
+        <div class="act-subtitle">Cristais de prata, tempo fixado em materia</div>
+        <p class="act-body">
+          A pelicula fotografica e uma camada de gelatina com cristais microscopicos de haleto de prata. Quando os fotoes os atingem, a estrutura electronica altera-se. A imagem analogica e materia. Tem textura, espessura, fragilidade. Pode sobreviver cem anos numa caixa escura. No cinema de 35 mm, cada segundo contem 24 fotogramas.
+        </p>
+        <span class="act-anchor">"Cada fotograma e um fragmento de luz fixado no tempo."</span>
+      </div>
     </div>
   </section>
 
   <!-- ATO IV -->
   <section class="act-section" data-act="ruptura">
-    <div class="act-content">
-      <div class="act-label">Ato IV</div>
-      <h2 class="act-title">A Ruptura</h2>
-      <div class="act-subtitle">2000. A memoria cinematografica torna-se dado.</div>
-      <p class="act-body">
-        Em 2000, os irmaos Coen rodaram Oh Brother, Where Art Thou?. Pela primeira vez na historia do cinema, cada fotograma do negativo foi digitalizado e o filme inteiro foi processado em Digital Intermediate. A luz continuou a entrar pela lente. Mas o que ficou guardado deixou de ser materia. Passou a ser informacao.
-      </p>
-      <span class="act-anchor">"No cinema digital a luz passa a transformar-se em dados."</span>
+    <div class="act-text-panel">
+      <div class="act-content">
+        <div class="act-label">Ato IV</div>
+        <h2 class="act-title">A Ruptura</h2>
+        <div class="act-subtitle">2000. A memoria cinematografica torna-se dado.</div>
+        <p class="act-body">
+          Em 2000, os irmaos Coen rodaram Oh Brother, Where Art Thou?. Pela primeira vez na historia do cinema, cada fotograma do negativo foi digitalizado e o filme inteiro foi processado em Digital Intermediate. A luz continuou a entrar pela lente. Mas o que ficou guardado deixou de ser materia. Passou a ser informacao.
+        </p>
+        <span class="act-anchor">"No cinema digital a luz passa a transformar-se em dados."</span>
+      </div>
     </div>
   </section>
 
   <!-- ATO V -->
   <section class="act-section" data-act="sensor">
-    <div class="act-content">
-      <div class="act-label">Ato V</div>
-      <h2 class="act-title">O Sensor</h2>
-      <div class="act-subtitle">O olho electronico que aprendeu a medir a luz</div>
-      <p class="act-body">
-        Em 1969, Willard Boyle e George E. Smith inventaram o sensor CCD. O principio e o efeito fotoelectrico: fotoes atingem um fotodiodo, libertam electroes, esses electroes acumulam-se como carga electrica proporcional a intensidade da luz. Cada photosite e composto por uma microlente, um filtro de cor, um fotodiodo e um circuito de leitura.
-      </p>
-      <span class="act-anchor">"O sensor nao decide o que e belo. Decide o que e mensuravel."</span>
+    <div class="act-text-panel">
+      <div class="act-content">
+        <div class="act-label">Ato V</div>
+        <h2 class="act-title">O Sensor</h2>
+        <div class="act-subtitle">O olho electronico que aprendeu a medir a luz</div>
+        <p class="act-body">
+          Em 1969, Willard Boyle e George E. Smith inventaram o sensor CCD. O principio e o efeito fotoelectrico: fotoes atingem um fotodiodo, libertam electroes, esses electroes acumulam-se como carga electrica proporcional a intensidade da luz. Cada photosite e composto por uma microlente, um filtro de cor, um fotodiodo e um circuito de leitura.
+        </p>
+        <span class="act-anchor">"O sensor nao decide o que e belo. Decide o que e mensuravel."</span>
+      </div>
     </div>
   </section>
 
   <!-- ATO VI -->
   <section class="act-section" data-act="pixel">
-    <div class="act-content">
-      <div class="act-label">Ato VI</div>
-      <h2 class="act-title">O Pixel</h2>
-      <div class="act-subtitle">A menor unidade de toda a memoria visual contemporanea</div>
-      <p class="act-body">
-        Pixel: picture element. Um pixel e um valor numerico que descreve intensidade e cor numa posicao especifica de uma grelha bidimensional. Sozinho, nao significa nada. Agrupado em milhoes, constroi o mundo visivel com uma precisao que o olho humano nao consegue distinguir de realidade.
-      </p>
-      <span class="act-anchor">"Cada pixel e um fragmento de memoria visual."</span>
+    <div class="act-text-panel">
+      <div class="act-content">
+        <div class="act-label">Ato VI</div>
+        <h2 class="act-title">O Pixel</h2>
+        <div class="act-subtitle">A menor unidade de toda a memoria visual contemporanea</div>
+        <p class="act-body">
+          Pixel: picture element. Um pixel e um valor numerico que descreve intensidade e cor numa posicao especifica de uma grelha bidimensional. Sozinho, nao significa nada. Agrupado em milhoes, constroi o mundo visivel com uma precisao que o olho humano nao consegue distinguir de realidade.
+        </p>
+        <span class="act-anchor">"Cada pixel e um fragmento de memoria visual."</span>
+      </div>
     </div>
   </section>
 
   <!-- ATO VII -->
   <section class="act-section" data-act="arquivo">
-    <div class="act-content">
-      <div class="act-label">Ato VII</div>
-      <h2 class="act-title">O Arquivo</h2>
-      <div class="act-subtitle">O que significa guardar imagens feitas de numeros</div>
-      <p class="act-body">
-        A imagem analogica e um objeto. A imagem digital e um conjunto de instrucoes. A pelicula existe por si mesma. A imagem digital precisa de hardware que a leia, de software que a interprete, de formatos que permanecam compativeis. A preservacao digital nao e um arquivo, e um processo continuo.
-      </p>
-      <span class="act-anchor">"Guardamos mais do que nunca. Mas o que guardamos depende de sistemas que podem falhar."</span>
+    <div class="act-text-panel">
+      <div class="act-content">
+        <div class="act-label">Ato VII</div>
+        <h2 class="act-title">O Arquivo</h2>
+        <div class="act-subtitle">O que significa guardar imagens feitas de numeros</div>
+        <p class="act-body">
+          A imagem analogica e um objeto. A imagem digital e um conjunto de instrucoes. A pelicula existe por si mesma. A imagem digital precisa de hardware que a leia, de software que a interprete, de formatos que permanecam compativeis. A preservacao digital nao e um arquivo, e um processo continuo.
+        </p>
+        <span class="act-anchor">"Guardamos mais do que nunca. Mas o que guardamos depende de sistemas que podem falhar."</span>
+      </div>
     </div>
   </section>
 
   <!-- EPILOGO -->
   <section class="act-section epilogue-section" data-act="epilogo">
-    <div class="act-content">
-      <div class="act-label">Epilogo</div>
-      <h2 class="epilogue-title">Cada pixel e um fragmento de luz convertido em numeros</h2>
-      <p class="act-body" style="text-align:center">
-        Desde os cristais de prata da emulsao fotografica ate ao sensor digital. Desde a camara obscura da Antiguidade ate ao ecra OLED. O problema nunca mudou: como fixar a luz. O que mudou foi o que fazemos com ela depois.
-      </p>
-      <span class="act-anchor" style="border-left:none;text-align:center;display:block;padding:0">"Esta transformacao e tecnica. E cultural. E filosofica. E comecou com um fotao."</span>
+    <div class="act-text-panel">
+      <div class="act-content">
+        <div class="act-label">Epilogo</div>
+        <h2 class="epilogue-title">Cada pixel e um fragmento de luz convertido em numeros</h2>
+        <p class="act-body" style="text-align:center">
+          Desde os cristais de prata da emulsao fotografica ate ao sensor digital. Desde a camara obscura da Antiguidade ate ao ecra OLED. O problema nunca mudou: como fixar a luz. O que mudou foi o que fazemos com ela depois.
+        </p>
+        <span class="act-anchor">"Esta transformacao e tecnica. E cultural. E filosofica. E comecou com um fotao."</span>
+      </div>
     </div>
   </section>
 
@@ -347,6 +422,7 @@ body{
 
 <!-- THREE.JS + GSAP -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script>
@@ -356,7 +432,7 @@ body{
 
 gsap.registerPlugin(ScrollTrigger);
 
-// ── SCENE SETUP ──
+// ── SCENE ──
 const canvas = document.getElementById('three-canvas');
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -365,58 +441,63 @@ renderer.setClearColor(0x000000, 0);
 
 const scene = new THREE.Scene();
 
-// Isometric orthographic camera
-const frustum = 8;
+const frustum = 7;
 const aspect = window.innerWidth / window.innerHeight;
 const camera = new THREE.OrthographicCamera(
-  -frustum * aspect, frustum * aspect,
-  frustum, -frustum, -100, 100
+  -frustum * aspect, frustum * aspect, frustum, -frustum, -100, 100
 );
-// Classic isometric angle
 camera.position.set(10, 10, 10);
 camera.lookAt(0, 0, 0);
 
-// Subtle lighting for depth
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+// ── ORBIT CONTROLS ──
+const controls = new THREE.OrbitControls(camera, canvas);
+controls.enableDamping = true;
+controls.dampingFactor = 0.08;
+controls.enableZoom = true;
+controls.minZoom = 0.5;
+controls.maxZoom = 2.5;
+controls.enablePan = false;
+controls.autoRotate = false;
+controls.maxPolarAngle = Math.PI * 0.65;
+controls.minPolarAngle = Math.PI * 0.15;
+// Allow scroll to pass through to page
+controls.enableZoom = false;
+
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.75);
 scene.add(ambientLight);
-const dirLight = new THREE.DirectionalLight(0xffffff, 0.5);
+const dirLight = new THREE.DirectionalLight(0xffffff, 0.45);
 dirLight.position.set(5, 10, 7);
 scene.add(dirLight);
 
 // ── MATERIALS ──
-const matWhite = new THREE.MeshLambertMaterial({ color: 0xfafafa, transparent: true, opacity: 0.85 });
-const matGray = new THREE.MeshLambertMaterial({ color: 0xe0e0e0, transparent: true, opacity: 0.8 });
-const matDarkGray = new THREE.MeshLambertMaterial({ color: 0x999999, transparent: true, opacity: 0.7 });
+const matWhite = new THREE.MeshLambertMaterial({ color: 0xfafafa, transparent: true, opacity: 0.9 });
+const matGray = new THREE.MeshLambertMaterial({ color: 0xe0e0e0, transparent: true, opacity: 0.85 });
+const matDarkGray = new THREE.MeshLambertMaterial({ color: 0x999999, transparent: true, opacity: 0.75 });
 const matR = new THREE.MeshLambertMaterial({ color: 0xff2d2d, transparent: true, opacity: 0.9 });
 const matG = new THREE.MeshLambertMaterial({ color: 0x00e676, transparent: true, opacity: 0.9 });
 const matB = new THREE.MeshLambertMaterial({ color: 0x2979ff, transparent: true, opacity: 0.9 });
-const lineMat = new THREE.LineBasicMaterial({ color: 0x111111, linewidth: 1 });
-const dashedMat = new THREE.LineDashedMaterial({ color: 0xaaaaaa, dashSize: 0.15, gapSize: 0.1, linewidth: 1 });
-const matRGlow = new THREE.MeshLambertMaterial({ color: 0xff2d2d, transparent: true, opacity: 0.4 });
-const matGGlow = new THREE.MeshLambertMaterial({ color: 0x00e676, transparent: true, opacity: 0.4 });
-const matBGlow = new THREE.MeshLambertMaterial({ color: 0x2979ff, transparent: true, opacity: 0.4 });
+const lineMat = new THREE.LineBasicMaterial({ color: 0x222222, linewidth: 1 });
+const dashedMat = new THREE.LineDashedMaterial({ color: 0xbbbbbb, dashSize: 0.15, gapSize: 0.1 });
+const matRGlow = new THREE.MeshLambertMaterial({ color: 0xff2d2d, transparent: true, opacity: 0.35 });
+const matBGlow = new THREE.MeshLambertMaterial({ color: 0x2979ff, transparent: true, opacity: 0.35 });
 
 // ── HELPERS ──
 function createBlock(w, h, d, material) {
   const geo = new THREE.BoxGeometry(w, h, d);
-  const mesh = new THREE.Mesh(geo, material);
-  // Add edges
+  const mesh = new THREE.Mesh(geo, material || matWhite);
   const edges = new THREE.EdgesGeometry(geo);
   const line = new THREE.LineSegments(edges, lineMat);
   mesh.add(line);
   return mesh;
 }
-
 function createDashedLine(from, to) {
   const geo = new THREE.BufferGeometry().setFromPoints([
-    new THREE.Vector3(from[0], from[1], from[2]),
-    new THREE.Vector3(to[0], to[1], to[2])
+    new THREE.Vector3(...from), new THREE.Vector3(...to)
   ]);
   const line = new THREE.Line(geo, dashedMat);
   line.computeLineDistances();
   return line;
 }
-
 function createWireBlock(w, h, d) {
   const geo = new THREE.BoxGeometry(w, h, d);
   const edges = new THREE.EdgesGeometry(geo);
@@ -424,650 +505,517 @@ function createWireBlock(w, h, d) {
 }
 
 // ── ACT GROUPS ──
-// Each act has a group with its illustration objects
-const acts = {};
 const actNames = ['hero','prologo','luz','camara','pelicula','ruptura','sensor','pixel','arquivo','epilogo'];
-
+const acts = {};
 actNames.forEach(name => {
   acts[name] = new THREE.Group();
   acts[name].visible = false;
   scene.add(acts[name]);
 });
 
+// ── 3D OFFSET: position groups to one side ──
+// Odd sections: text left → 3D shifted RIGHT (+x in screen space)
+// Even sections: text right → 3D shifted LEFT (-x in screen space)
+// We'll update this dynamically based on current act
+
 // ── BUILD ILLUSTRATIONS ──
 
-// HERO — Single floating photon cube with light rays
-(function buildHero() {
+// HERO — Photon with rays
+(function() {
   const g = acts.hero;
-  // Central photon cube
   const photon = createBlock(0.6, 0.6, 0.6, matB);
   g.add(photon);
   g.userData.photon = photon;
-  // Light rays as thin lines extending outward
-  const rayDirs = [
-    [3, 0, 0], [-3, 0, 0], [0, 3, 0], [0, -3, 0], [0, 0, 3], [0, 0, -3],
-    [2, 2, 0], [-2, 2, 0], [2, -2, 0], [-2, -2, 0],
-    [0, 2, 2], [0, -2, 2], [2, 0, 2], [-2, 0, -2]
+  const rayMat = new THREE.LineBasicMaterial({ color: 0x2979ff, transparent: true, opacity: 0.25 });
+  const dirs = [
+    [3,0,0],[-3,0,0],[0,3,0],[0,-3,0],[0,0,3],[0,0,-3],
+    [2,2,0],[-2,2,0],[2,-2,0],[-2,-2,0],[0,2,2],[0,-2,2],[2,0,2],[-2,0,-2]
   ];
-  const rayMat = new THREE.LineBasicMaterial({ color: 0x2979ff, transparent: true, opacity: 0.3 });
-  rayDirs.forEach(d => {
-    const pts = [new THREE.Vector3(0,0,0), new THREE.Vector3(d[0],d[1],d[2])];
-    const geo = new THREE.BufferGeometry().setFromPoints(pts);
-    const ray = new THREE.Line(geo, rayMat);
-    ray.userData.targetScale = 1;
-    g.add(ray);
+  dirs.forEach(d => {
+    const pts = [new THREE.Vector3(0,0,0), new THREE.Vector3(...d)];
+    g.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), rayMat));
   });
 })();
 
-// PROLOGO — Expanding light shell, layered cubes
-(function buildPrologo() {
+// PROLOGO — Expanding concentric layers
+(function() {
   const g = acts.prologo;
-  // Center eye (small cube)
   const eye = createBlock(0.5, 0.3, 0.5, matWhite);
-  eye.position.set(0, 0, 0);
   g.add(eye);
-  // Concentric expanding layers
-  for (let layer = 0; layer < 4; layer++) {
-    const s = 1 + layer * 0.8;
+  for (let i = 0; i < 4; i++) {
+    const s = 1 + i * 0.8;
     const wire = createWireBlock(s, 0.1, s);
-    wire.position.set(0, layer * 1.2, 0);
+    wire.position.y = i * 1.2;
     g.add(wire);
-    // Dashed projection lines
-    if (layer > 0) {
-      const corners = [[-s/2,0,-s/2],[s/2,0,-s/2],[s/2,0,s/2],[-s/2,0,s/2]];
-      corners.forEach(c => {
-        const dl = createDashedLine(
-          [c[0], (layer-1)*1.2, c[2]],
-          [c[0], layer*1.2, c[2]]
-        );
-        g.add(dl);
+    if (i > 0) {
+      [[-s/2,0,-s/2],[s/2,0,-s/2],[s/2,0,s/2],[-s/2,0,s/2]].forEach(c => {
+        g.add(createDashedLine([c[0],(i-1)*1.2,c[2]], [c[0],i*1.2,c[2]]));
       });
     }
   }
-  // Small RGB accent cubes
-  const acc = createBlock(0.2, 0.2, 0.2, matR);
-  acc.position.set(-1.5, 3.6, 0);
-  g.add(acc);
-  const acc2 = createBlock(0.2, 0.2, 0.2, matG);
-  acc2.position.set(0, 3.6, -1.5);
-  g.add(acc2);
-  const acc3 = createBlock(0.2, 0.2, 0.2, matB);
-  acc3.position.set(1.5, 3.6, 0);
-  g.add(acc3);
-  g.position.set(0, -2, 0);
+  [[-1.5,3.6,0,matR],[0,3.6,-1.5,matG],[1.5,3.6,0,matB]].forEach(([x,y,z,m]) => {
+    const acc = createBlock(0.2,0.2,0.2,m);
+    acc.position.set(x,y,z);
+    g.add(acc);
+  });
+  g.position.y = -2;
 })();
 
-// ATO I — LUZ: Spectrum decomposition
-(function buildLuz() {
+// ATO I — LUZ: Prism + spectrum
+(function() {
   const g = acts.luz;
-  // Wavelength blocks arranged horizontally, stacked vertically
-  const colors = [0x7b1fa2, 0x2979ff, 0x00e676, 0xffee58, 0xff9100, 0xff2d2d];
-  const labels = ['400nm','470nm','530nm','580nm','620nm','700nm'];
-
-  // Bottom: white light prism (triangle-like block)
-  const prism = createBlock(1.2, 1.2, 1.2, matWhite);
-  prism.rotation.y = Math.PI / 4;
-  prism.position.set(0, -2, 0);
+  const prism = createBlock(1.2,1.2,1.2,matWhite);
+  prism.rotation.y = Math.PI/4;
+  prism.position.y = -2;
   g.add(prism);
 
-  // Spectrum layer
-  colors.forEach((c, i) => {
-    const mat = new THREE.MeshLambertMaterial({ color: c, transparent: true, opacity: 0.85 });
-    const block = createBlock(0.4, 0.4, 0.4, mat);
-    block.position.set(-1.2 + i * 0.5, 1.5, 0);
+  const colors = [0x7b1fa2,0x2979ff,0x00e676,0xffee58,0xff9100,0xff2d2d];
+  colors.forEach((c,i) => {
+    const mat = new THREE.MeshLambertMaterial({color:c,transparent:true,opacity:0.85});
+    const block = createBlock(0.4,0.4,0.4,mat);
+    block.position.set(-1.2+i*0.5, 1.5, 0);
     g.add(block);
   });
 
-  // Dashed lines from prism to spectrum
-  const d1 = createDashedLine([0, -1.2, 0], [-1.2, 1.2, 0]);
-  const d2 = createDashedLine([0, -1.2, 0], [1.2, 1.2, 0]);
-  g.add(d1); g.add(d2);
+  g.add(createDashedLine([0,-1.2,0],[-1.2,1.2,0]));
+  g.add(createDashedLine([0,-1.2,0],[1.2,1.2,0]));
 
-  // Photon particles (small cubes)
-  for (let i = 0; i < 8; i++) {
-    const p = createBlock(0.12, 0.12, 0.12, matB);
-    const angle = (i / 8) * Math.PI * 2;
-    p.position.set(Math.cos(angle) * 2, -2 + Math.random() * 0.5, Math.sin(angle) * 2);
+  for (let i=0;i<6;i++){
+    const p=createBlock(0.1,0.1,0.1,matB);
+    const a=(i/6)*Math.PI*2;
+    p.position.set(Math.cos(a)*1.8,-2+Math.random()*0.4,Math.sin(a)*1.8);
     g.add(p);
   }
 
-  // Top: Einstein equation layer
-  const topBlock = createBlock(2.5, 0.08, 2.5, matGray);
-  topBlock.position.set(0, 3.5, 0);
-  g.add(topBlock);
-  const d3 = createDashedLine([-1.2, 1.8, 0], [-1.2, 3.3, 0]);
-  const d4 = createDashedLine([1.2, 1.8, 0], [1.2, 3.3, 0]);
-  g.add(d3); g.add(d4);
-
-  g.position.set(0, -1, 0);
+  const top=createBlock(2.5,0.06,2.5,matGray);
+  top.position.y=3.2;
+  g.add(top);
+  g.add(createDashedLine([-1.2,1.8,0],[-1.2,3,0]));
+  g.add(createDashedLine([1.2,1.8,0],[1.2,3,0]));
+  g.position.y=-1;
 })();
 
-// ATO II — CAMARA: Exploded camera obscura
-(function buildCamara() {
+// ATO II — CAMARA: Exploded camera
+(function() {
   const g = acts.camara;
-
-  // Layer 0: Scene (outside world) — wireframe
-  const world = createWireBlock(4, 2.5, 0.1);
-  world.position.set(0, 4, 0);
+  // Scene plane
+  const world = createWireBlock(3.5,2,0.08);
+  world.position.y=4;
   g.add(world);
-
-  // Layer 1: Lens element
-  const lens = createBlock(1.2, 0.15, 1.2, matB);
-  lens.position.set(0, 2.2, 0);
+  // Lens
+  const lens = createBlock(1,0.12,1,matB);
+  lens.position.y=2.2;
   g.add(lens);
-  // Aperture ring
-  const apertureWire = createWireBlock(0.8, 0.1, 0.8);
-  apertureWire.position.set(0, 2.2, 0);
-  g.add(apertureWire);
-
-  // Layer 2: Camera body
-  const body = createBlock(3, 2, 2);
-  body.material = matWhite;
-  body.position.set(0, 0, 0);
+  // Body
+  const body = createBlock(2.5,1.6,1.6,matWhite);
   g.add(body);
-  // Opening
-  const opening = createWireBlock(0.6, 0.6, 0.1);
-  opening.position.set(0, 0, 1.05);
-  g.add(opening);
-
-  // Layer 3: Film plane / sensor
-  const filmPlane = createBlock(2.5, 1.5, 0.08, matGray);
-  filmPlane.position.set(0, -2.5, 0);
-  g.add(filmPlane);
-
-  // Dashed projection lines
-  const d1 = createDashedLine([0, 3.8, 0], [0, 2.5, 0]);
-  const d2 = createDashedLine([0, 2, 0], [0, 1.2, 0]);
-  const d3 = createDashedLine([0, -1.2, 0], [0, -2.3, 0]);
-  g.add(d1); g.add(d2); g.add(d3);
-
-  // Light ray through lens (colored line)
-  const rayPts = [
-    new THREE.Vector3(1.5, 4, 0),
-    new THREE.Vector3(0, 2.2, 0),
-    new THREE.Vector3(-1, -2.5, 0)
-  ];
-  const rayGeo = new THREE.BufferGeometry().setFromPoints(rayPts);
-  const rayLine = new THREE.Line(rayGeo, new THREE.LineBasicMaterial({ color: 0x2979ff, transparent: true, opacity: 0.5 }));
-  g.add(rayLine);
-
-  g.position.set(0, -1, 0);
+  // Film plane
+  const film = createBlock(2,1.2,0.06,matGray);
+  film.position.y=-2.2;
+  g.add(film);
+  // Dashed
+  g.add(createDashedLine([0,3.8,0],[0,2.5,0]));
+  g.add(createDashedLine([0,2,0],[0,1,0]));
+  g.add(createDashedLine([0,-1,0],[0,-2,0]));
+  // Light ray
+  const rayPts=[new THREE.Vector3(1.2,4,0),new THREE.Vector3(0,2.2,0),new THREE.Vector3(-0.8,-2.2,0)];
+  g.add(new THREE.Line(
+    new THREE.BufferGeometry().setFromPoints(rayPts),
+    new THREE.LineBasicMaterial({color:0x2979ff,transparent:true,opacity:0.45})
+  ));
+  g.position.y=-1;
 })();
 
-// ATO III — PELICULA: Film strip layers
-(function buildPelicula() {
+// ATO III — PELICULA: Film strip
+(function() {
   const g = acts.pelicula;
-
-  // Layer 0: Base (film strip body)
-  const strip = createBlock(4, 0.15, 1.5, matWhite);
-  strip.position.set(0, -1.5, 0);
+  const strip = createBlock(3.5,0.12,1.3,matWhite);
+  strip.position.y=-1.5;
   g.add(strip);
-
   // Sprocket holes
-  for (let i = -3; i <= 3; i++) {
-    const hole = createWireBlock(0.15, 0.2, 0.15);
-    hole.position.set(i * 0.55, -1.5, 0.8);
-    g.add(hole);
-    const hole2 = createWireBlock(0.15, 0.2, 0.15);
-    hole2.position.set(i * 0.55, -1.5, -0.8);
-    g.add(hole2);
+  for(let i=-3;i<=3;i++){
+    const h=createWireBlock(0.12,0.18,0.12);
+    h.position.set(i*0.5,-1.5,0.7);
+    g.add(h);
+    const h2=createWireBlock(0.12,0.18,0.12);
+    h2.position.set(i*0.5,-1.5,-0.7);
+    g.add(h2);
   }
-
-  // Layer 1: Emulsion (gelatine layer)
-  const emulsion = createBlock(3.5, 0.08, 1.2, matGray);
-  emulsion.position.set(0, 0, 0);
+  // Emulsion
+  const emulsion=createBlock(3,0.06,1,matGray);
   g.add(emulsion);
-
-  // Silver halide crystals
-  for (let i = 0; i < 20; i++) {
-    const crystal = createBlock(0.1, 0.1, 0.1, matDarkGray);
-    crystal.position.set(
-      (Math.random() - 0.5) * 3,
-      0.1,
-      (Math.random() - 0.5) * 1
-    );
-    g.add(crystal);
+  // Silver crystals
+  for(let i=0;i<15;i++){
+    const c=createBlock(0.08,0.08,0.08,matDarkGray);
+    c.position.set((Math.random()-0.5)*2.5,0.08,(Math.random()-0.5)*0.8);
+    g.add(c);
   }
-
-  // Layer 2: Latent image (photon hits)
-  const latentPlane = createBlock(3.5, 0.05, 1.2, matRGlow);
-  latentPlane.position.set(0, 1.5, 0);
-  g.add(latentPlane);
-  // Exposed areas (darker blocks)
-  for (let i = 0; i < 5; i++) {
-    const exposed = createBlock(0.5 + Math.random() * 0.4, 0.08, 0.3 + Math.random() * 0.3, matDarkGray);
-    exposed.position.set((Math.random() - 0.5) * 2.5, 1.55, (Math.random() - 0.5) * 0.8);
-    g.add(exposed);
+  // Latent image
+  const latent=createBlock(3,0.04,1,matRGlow);
+  latent.position.y=1.5;
+  g.add(latent);
+  for(let i=0;i<4;i++){
+    const e=createBlock(0.4+Math.random()*0.3,0.06,0.25+Math.random()*0.2,matDarkGray);
+    e.position.set((Math.random()-0.5)*2,1.55,(Math.random()-0.5)*0.6);
+    g.add(e);
   }
-
-  // Layer 3: Final image (24 frames)
-  for (let i = 0; i < 5; i++) {
-    const frame = createBlock(0.55, 0.03, 0.8, i === 2 ? matB : matGray);
-    frame.position.set(-1.2 + i * 0.6, 3, 0);
-    g.add(frame);
+  // Frames
+  for(let i=0;i<5;i++){
+    const f=createBlock(0.5,0.03,0.7,i===2?matB:matGray);
+    f.position.set(-1+i*0.55,3,0);
+    g.add(f);
   }
-
-  // Dashed projection lines
-  g.add(createDashedLine([-1.5, -1.3, 0], [-1.5, -0.2, 0]));
-  g.add(createDashedLine([1.5, -1.3, 0], [1.5, -0.2, 0]));
-  g.add(createDashedLine([-1.5, 0.2, 0], [-1.5, 1.3, 0]));
-  g.add(createDashedLine([1.5, 0.2, 0], [1.5, 1.3, 0]));
-  g.add(createDashedLine([-1.5, 1.7, 0], [-1.5, 2.8, 0]));
-  g.add(createDashedLine([1.5, 1.7, 0], [1.5, 2.8, 0]));
-
-  g.position.set(0, -1, 0);
+  // Dashed
+  [[-1.3,-1.3,1.3,-0.2],[-1.3,0.2,1.3,1.3],[-1.3,1.7,1.3,2.8]].forEach(([x,y1,x2,y2])=>{
+    g.add(createDashedLine([x,y1,0],[x,y2,0]));
+    g.add(createDashedLine([x2,y1,0],[x2,y2,0]));
+  });
+  g.position.y=-1;
 })();
 
-// ATO IV — RUPTURA: Analog → Digital split
-(function buildRuptura() {
+// ATO IV — RUPTURA: Analog→Digital
+(function() {
   const g = acts.ruptura;
-
-  // LEFT: Analog film block
-  const analogBase = createBlock(2, 2, 2, matWhite);
-  analogBase.position.set(-2.5, 0, 0);
-  g.add(analogBase);
-  // Film texture (horizontal lines)
-  for (let i = 0; i < 5; i++) {
-    const line = createBlock(2.1, 0.02, 0.01, matDarkGray);
-    line.position.set(-2.5, -0.8 + i * 0.4, 1.01);
-    g.add(line);
+  // Analog block
+  const analog = createBlock(1.8,1.8,1.8,matWhite);
+  analog.position.set(-2.2,0,0);
+  g.add(analog);
+  for(let i=0;i<5;i++){
+    const l=createBlock(1.9,0.02,0.01,matDarkGray);
+    l.position.set(-2.2,-0.7+i*0.35,0.92);
+    g.add(l);
   }
-
-  // CENTER: Rupture line (vertical)
-  const ruptureLine = createBlock(0.02, 4, 0.02, matR);
-  ruptureLine.position.set(0, 0, 0);
-  g.add(ruptureLine);
-  // Year marker
-  const yearBlock = createBlock(0.6, 0.3, 0.3, matR);
-  yearBlock.position.set(0, 2.5, 0);
-  g.add(yearBlock);
-
-  // RIGHT: Digital pixel grid
-  const gridSize = 4;
-  const cellSize = 0.45;
-  const rgbCols = [matR, matG, matB];
-  for (let x = 0; x < gridSize; x++) {
-    for (let z = 0; z < gridSize; z++) {
-      const mat = rgbCols[(x + z) % 3];
-      const cell = createBlock(cellSize, cellSize, cellSize, mat);
-      cell.position.set(
-        1.5 + x * (cellSize + 0.05),
-        -0.8 + z * (cellSize + 0.05),
-        0
-      );
+  // Rupture line
+  const rl=createBlock(0.02,3.5,0.02,matR);
+  g.add(rl);
+  const yr=createBlock(0.5,0.25,0.25,matR);
+  yr.position.y=2.2;
+  g.add(yr);
+  // Digital grid
+  const cs=0.4;
+  const rgbM=[matR,matG,matB];
+  for(let x=0;x<4;x++){
+    for(let z=0;z<4;z++){
+      const cell=createBlock(cs,cs,cs,rgbM[(x+z)%3]);
+      cell.position.set(1.3+x*(cs+0.04),-0.7+z*(cs+0.04),0);
       g.add(cell);
     }
   }
-
-  // Arrow from analog to digital
-  const arrowPts = [
-    new THREE.Vector3(-1.2, 0, 0),
-    new THREE.Vector3(1.2, 0, 0)
-  ];
-  const arrowGeo = new THREE.BufferGeometry().setFromPoints(arrowPts);
-  const arrow = new THREE.Line(arrowGeo, new THREE.LineBasicMaterial({ color: 0xff2d2d, transparent: true, opacity: 0.6 }));
-  g.add(arrow);
-
-  // Dashed projection from analog layers
-  g.add(createDashedLine([-2.5, 1.2, 0], [-2.5, 3, 0]));
-  g.add(createDashedLine([3, 1.2, 0], [3, 3, 0]));
-  const topBar = createBlock(6, 0.04, 0.04, matDarkGray);
-  topBar.position.set(0.25, 3.2, 0);
-  g.add(topBar);
-
-  g.position.set(0, -1, 0);
+  // Arrow
+  g.add(new THREE.Line(
+    new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-1,0,0),new THREE.Vector3(1,0,0)]),
+    new THREE.LineBasicMaterial({color:0xff2d2d,transparent:true,opacity:0.5})
+  ));
+  g.position.y=-0.5;
 })();
 
-// ATO V — SENSOR: CCD/CMOS grid exploded
-(function buildSensor() {
+// ATO V — SENSOR: Exploded CCD
+(function() {
   const g = acts.sensor;
-
-  // Layer 0: Base circuit board
-  const board = createBlock(4, 0.12, 4, matGray);
-  board.position.set(0, -2.5, 0);
+  // Board
+  const board=createBlock(3.5,0.1,3.5,matGray);
+  board.position.y=-2.5;
   g.add(board);
-  // Circuit traces
-  for (let i = 0; i < 5; i++) {
-    const trace = createBlock(4, 0.02, 0.03, matDarkGray);
-    trace.position.set(0, -2.4, -1.5 + i * 0.7);
-    g.add(trace);
+  for(let i=0;i<4;i++){
+    const t=createBlock(3.5,0.02,0.02,matDarkGray);
+    t.position.set(0,-2.4,-1.2+i*0.7);
+    g.add(t);
   }
-
-  // Layer 1: Photodiode array
-  const pdSize = 0.35;
-  for (let x = 0; x < 6; x++) {
-    for (let z = 0; z < 6; z++) {
-      const pd = createBlock(pdSize, 0.08, pdSize, matWhite);
-      pd.position.set(-1.1 + x * 0.45, -0.5, -1.1 + z * 0.45);
+  // Photodiodes
+  const ps=0.3;
+  for(let x=0;x<5;x++){
+    for(let z=0;z<5;z++){
+      const pd=createBlock(ps,0.06,ps,matWhite);
+      pd.position.set(-0.8+x*0.4,-0.5,-0.8+z*0.4);
       g.add(pd);
     }
   }
-
-  // Layer 2: Bayer color filter
-  for (let x = 0; x < 6; x++) {
-    for (let z = 0; z < 6; z++) {
-      let mat;
-      if (x % 2 === 0 && z % 2 === 0) mat = matR;
-      else if (x % 2 === 1 && z % 2 === 1) mat = matB;
-      else mat = matG;
-      const filter = createBlock(pdSize, 0.04, pdSize, mat);
-      filter.position.set(-1.1 + x * 0.45, 1.2, -1.1 + z * 0.45);
-      g.add(filter);
+  // Bayer filter
+  for(let x=0;x<5;x++){
+    for(let z=0;z<5;z++){
+      let m;
+      if(x%2===0&&z%2===0)m=matR;
+      else if(x%2===1&&z%2===1)m=matB;
+      else m=matG;
+      const f=createBlock(ps,0.03,ps,m);
+      f.position.set(-0.8+x*0.4,1.2,-0.8+z*0.4);
+      g.add(f);
     }
   }
-
-  // Layer 3: Microlens array
-  for (let x = 0; x < 6; x++) {
-    for (let z = 0; z < 6; z++) {
-      const lens = createBlock(pdSize * 0.8, pdSize * 0.8, pdSize * 0.8, matWhite);
-      lens.position.set(-1.1 + x * 0.45, 3, -1.1 + z * 0.45);
-      lens.rotation.y = Math.PI / 4;
-      g.add(lens);
+  // Microlenses
+  for(let x=0;x<5;x++){
+    for(let z=0;z<5;z++){
+      const ml=createBlock(ps*0.7,ps*0.7,ps*0.7,matWhite);
+      ml.position.set(-0.8+x*0.4,3,-0.8+z*0.4);
+      ml.rotation.y=Math.PI/4;
+      g.add(ml);
     }
   }
-
-  // Dashed projection lines (corners)
-  const corners = [[-1.1, -1.1], [1.35, -1.1], [1.35, 1.35], [-1.1, 1.35]];
-  corners.forEach(([cx, cz]) => {
-    g.add(createDashedLine([cx, -2.3, cz], [cx, -0.7, cz]));
-    g.add(createDashedLine([cx, -0.3, cz], [cx, 1, cz]));
-    g.add(createDashedLine([cx, 1.4, cz], [cx, 2.8, cz]));
+  // Dashed
+  const cn=[[-0.8,-0.8],[0.8,-0.8],[0.8,0.8],[-0.8,0.8]];
+  cn.forEach(([cx,cz])=>{
+    g.add(createDashedLine([cx,-2.3,cz],[cx,-0.7,cz]));
+    g.add(createDashedLine([cx,-0.3,cz],[cx,1,cz]));
+    g.add(createDashedLine([cx,1.4,cz],[cx,2.7,cz]));
   });
-
-  g.position.set(0, -0.5, 0);
+  g.position.y=-0.5;
 })();
 
-// ATO VI — PIXEL: Exploded single pixel
-(function buildPixel() {
+// ATO VI — PIXEL: Exploded RGB
+(function() {
   const g = acts.pixel;
-
-  // Giant pixel — 3 RGB sub-pixels exploded vertically
-  const subR = createBlock(1.2, 1.2, 1.2, matR);
-  subR.position.set(-1.5, 3, 0);
+  // RGB sub-pixels
+  const subR=createBlock(1,1,1,matR);
+  subR.position.set(-1.3,3,0);
   g.add(subR);
-
-  const subG = createBlock(1.2, 1.2, 1.2, matG);
-  subG.position.set(0, 3, 0);
+  const subG=createBlock(1,1,1,matG);
+  subG.position.set(0,3,0);
   g.add(subG);
-
-  const subB = createBlock(1.2, 1.2, 1.2, matB);
-  subB.position.set(1.5, 3, 0);
+  const subB=createBlock(1,1,1,matB);
+  subB.position.set(1.3,3,0);
   g.add(subB);
-
-  // Combined pixel below
-  const combined = createBlock(1.5, 1.5, 1.5, matWhite);
-  combined.position.set(0, 0, 0);
+  // Combined
+  const combined=createBlock(1.3,1.3,1.3,matWhite);
   g.add(combined);
-
-  // Dashed lines from sub-pixels to combined
-  g.add(createDashedLine([-1.5, 2.2, 0], [-0.5, 1, 0]));
-  g.add(createDashedLine([0, 2.2, 0], [0, 1, 0]));
-  g.add(createDashedLine([1.5, 2.2, 0], [0.5, 1, 0]));
-
-  // Pixel grid context (surrounding small pixels)
-  for (let x = -3; x <= 3; x++) {
-    for (let z = -2; z <= 2; z++) {
-      if (x === 0 && z === 0) continue;
-      const p = createBlock(0.35, 0.35, 0.35, matGray);
-      p.position.set(x * 0.5, -2.5, z * 0.5);
+  // Dashed
+  g.add(createDashedLine([-1.3,2.3,0],[-0.4,0.9,0]));
+  g.add(createDashedLine([0,2.3,0],[0,0.9,0]));
+  g.add(createDashedLine([1.3,2.3,0],[0.4,0.9,0]));
+  // Grid
+  for(let x=-3;x<=3;x++){
+    for(let z=-2;z<=2;z++){
+      if(x===0&&z===0)continue;
+      const p=createBlock(0.3,0.3,0.3,matGray);
+      p.position.set(x*0.45,-2.3,z*0.45);
       g.add(p);
     }
   }
-
-  // Glitch displacement — some pixels offset
-  const glitch1 = createBlock(0.35, 0.35, 0.35, matR);
-  glitch1.position.set(1.5, -2.2, 0.5);
-  g.add(glitch1);
-  const glitch2 = createBlock(0.35, 0.35, 0.35, matB);
-  glitch2.position.set(-1, -2.8, -0.5);
-  g.add(glitch2);
-
-  g.position.set(0, -0.5, 0);
+  // Glitch
+  const gl1=createBlock(0.3,0.3,0.3,matR);
+  gl1.position.set(1.2,-2,0.45);
+  g.add(gl1);
+  const gl2=createBlock(0.3,0.3,0.3,matB);
+  gl2.position.set(-0.9,-2.6,-0.45);
+  g.add(gl2);
+  g.position.y=-0.3;
 })();
 
-// ATO VII — ARQUIVO: Fragile storage layers
-(function buildArquivo() {
+// ATO VII — ARQUIVO: Fragile layers
+(function() {
   const g = acts.arquivo;
-
-  // Layer 0: Physical film reel (stable, solid)
-  const reel = createBlock(2.5, 0.2, 2.5, matWhite);
-  reel.position.set(-1, -2, 0);
+  // Film reel
+  const reel=createBlock(2.2,0.18,2.2,matWhite);
+  reel.position.set(-0.8,-2,0);
   g.add(reel);
-  const reelCenter = createBlock(0.5, 0.4, 0.5, matDarkGray);
-  reelCenter.position.set(-1, -1.8, 0);
-  g.add(reelCenter);
-
-  // Layer 1: Hard drive (medium stability)
-  const hdd = createBlock(2, 0.3, 1.5, matGray);
-  hdd.position.set(1, 0, 0);
+  const rc=createBlock(0.4,0.35,0.4,matDarkGray);
+  rc.position.set(-0.8,-1.7,0);
+  g.add(rc);
+  // HDD
+  const hdd=createBlock(1.8,0.25,1.3,matGray);
+  hdd.position.set(0.5,0,0);
   g.add(hdd);
-  const platters = createBlock(1.5, 0.05, 1.5, matDarkGray);
-  platters.position.set(1, 0.2, 0);
-  g.add(platters);
-
-  // Layer 2: Digital file (fragile — broken/glitchy)
-  const file = createBlock(2, 0.1, 1.5, matBGlow);
-  file.position.set(0, 2, 0);
+  const plat=createBlock(1.3,0.04,1.3,matDarkGray);
+  plat.position.set(0.5,0.18,0);
+  g.add(plat);
+  // Digital file
+  const file=createBlock(1.8,0.08,1.3,matBGlow);
+  file.position.set(0,2,0);
   g.add(file);
-  // Fragmentation — broken blocks
-  for (let i = 0; i < 6; i++) {
-    const frag = createBlock(0.3, 0.1, 0.2, i < 3 ? matB : matRGlow);
-    frag.position.set(
-      -0.8 + Math.random() * 1.6,
-      2.2 + Math.random() * 0.5,
-      -0.5 + Math.random() * 1
-    );
-    frag.rotation.set(Math.random() * 0.3, Math.random() * 0.3, Math.random() * 0.3);
-    g.add(frag);
+  for(let i=0;i<5;i++){
+    const f=createBlock(0.25,0.08,0.18,i<2?matB:matRGlow);
+    f.position.set(-0.6+Math.random()*1.2,2.2+Math.random()*0.4,-0.4+Math.random()*0.8);
+    f.rotation.set(Math.random()*0.3,Math.random()*0.3,Math.random()*0.3);
+    g.add(f);
   }
-
-  // Layer 3: Cloud / void
-  const cloud = createWireBlock(3, 0.5, 2);
-  cloud.position.set(0, 4, 0);
+  // Cloud void
+  const cloud=createWireBlock(2.5,0.4,1.8);
+  cloud.position.y=3.8;
   g.add(cloud);
-  // Question: some blocks disappearing
-  for (let i = 0; i < 3; i++) {
-    const vanish = createBlock(0.25, 0.25, 0.25, matRGlow);
-    vanish.position.set(-1 + i, 4.3, 0);
-    g.add(vanish);
+  for(let i=0;i<3;i++){
+    const v=createBlock(0.2,0.2,0.2,matRGlow);
+    v.position.set(-0.8+i*0.8,4.1,0);
+    g.add(v);
   }
-
-  // Dashed projection lines
-  g.add(createDashedLine([0, -1.6, 0], [0, -0.4, 0]));
-  g.add(createDashedLine([0, 0.5, 0], [0, 1.7, 0]));
-  g.add(createDashedLine([0, 2.5, 0], [0, 3.7, 0]));
-
-  g.position.set(0, -1, 0);
+  // Dashed
+  g.add(createDashedLine([0,-1.6,0],[0,-0.4,0]));
+  g.add(createDashedLine([0,0.4,0],[0,1.7,0]));
+  g.add(createDashedLine([0,2.5,0],[0,3.5,0]));
+  g.position.y=-1;
 })();
 
-// EPILOGO — Combined essence: photon → pixel chain
-(function buildEpilogo() {
+// EPILOGO — Vertical chain
+(function() {
   const g = acts.epilogo;
-
-  // Vertical chain of key elements
-  // Photon
-  const photon = createBlock(0.4, 0.4, 0.4, matB);
-  photon.position.set(0, -3, 0);
-  g.add(photon);
-  // Lens
-  const lens = createBlock(0.8, 0.1, 0.8, matBGlow);
-  lens.position.set(0, -1.5, 0);
-  g.add(lens);
-  // Film grain
-  const grain = createBlock(0.6, 0.15, 0.6, matGray);
-  grain.position.set(0, 0, 0);
-  g.add(grain);
-  // Sensor
-  const sensorBlock = createBlock(0.7, 0.07, 0.7, matG);
-  sensorBlock.position.set(0, 1.5, 0);
-  g.add(sensorBlock);
-  // Pixel
-  const px = createBlock(0.5, 0.5, 0.5, matR);
-  px.position.set(0, 3, 0);
-  g.add(px);
-
-  // Dashed connections
-  g.add(createDashedLine([0, -2.5, 0], [0, -1.8, 0]));
-  g.add(createDashedLine([0, -1.2, 0], [0, -0.3, 0]));
-  g.add(createDashedLine([0, 0.3, 0], [0, 1.2, 0]));
-  g.add(createDashedLine([0, 1.7, 0], [0, 2.6, 0]));
-
-  g.position.set(0, 0, 0);
+  const items = [
+    [0.35,0.35,0.35, matB, -3],    // photon
+    [0.7,0.08,0.7, matBGlow, -1.5], // lens
+    [0.5,0.12,0.5, matGray, 0],     // grain
+    [0.6,0.06,0.6, matG, 1.5],      // sensor
+    [0.45,0.45,0.45, matR, 3],       // pixel
+  ];
+  items.forEach(([w,h,d,m,y]) => {
+    const b=createBlock(w,h,d,m);
+    b.position.y=y;
+    g.add(b);
+  });
+  g.add(createDashedLine([0,-2.6,0],[0,-1.8,0]));
+  g.add(createDashedLine([0,-1.2,0],[0,-0.3,0]));
+  g.add(createDashedLine([0,0.3,0],[0,1.2,0]));
+  g.add(createDashedLine([0,1.7,0],[0,2.7,0]));
 })();
 
-// ── SCROLL ANIMATION ENGINE ──
-let currentAct = 'hero';
+// ── SCROLL SYSTEM ──
 const actSections = document.querySelectorAll('.act-section');
-const actContents = document.querySelectorAll('.act-content');
 const progressBar = document.getElementById('progress-bar');
 const actCounter = document.getElementById('act-counter');
 const actLabels = {
-  hero: '', prologo: 'Prologo',
-  luz: 'I / VIII', camara: 'II / VIII', pelicula: 'III / VIII',
-  ruptura: 'IV / VIII', sensor: 'V / VIII', pixel: 'VI / VIII',
-  arquivo: 'VII / VIII', epilogo: 'Epilogo'
+  hero:'', prologo:'Prologo',
+  luz:'I / VIII', camara:'II / VIII', pelicula:'III / VIII',
+  ruptura:'IV / VIII', sensor:'V / VIII', pixel:'VI / VIII',
+  arquivo:'VII / VIII', epilogo:'Epilogo'
 };
 
-// Per-act animation state
+let activeAct = 'hero';
 const actProgress = {};
 actNames.forEach(n => actProgress[n] = 0);
 
-// ScrollTrigger for each section
-actSections.forEach((section, index) => {
+// Determine 3D position offset to keep illustration away from text.
+// CSS nth-child: odd child (idx 0,2,4,6,8) → text LEFT, even child (idx 1,3,5,7,9) → text RIGHT
+// In isometric view from (10,10,10), +x moves right on screen, -x moves left.
+// Returns which side to render the 3D: 'center', 'right', 'left'
+function get3DSide(actName) {
+  if (actName === 'hero' || actName === 'epilogo') return 'center';
+  const idx = actNames.indexOf(actName);
+  // idx even → DOM odd child → text LEFT → 3D on RIGHT
+  // idx odd → DOM even child → text RIGHT → 3D on LEFT
+  return (idx % 2 === 0) ? 'right' : 'left';
+}
+
+// Viewport state (lerps smoothly)
+let vpTargetX = 0, vpTargetW = 1;
+let vpCurrentX = 0, vpCurrentW = 1;
+
+// ScrollTrigger per section
+actSections.forEach((section) => {
   const actName = section.dataset.act;
   const content = section.querySelector('.act-content');
 
   ScrollTrigger.create({
     trigger: section,
-    start: 'top 80%',
-    end: 'bottom 20%',
+    start: 'top 85%',
+    end: 'bottom 15%',
     onUpdate: (self) => {
       actProgress[actName] = self.progress;
     },
     onEnter: () => {
-      currentAct = actName;
+      activeAct = actName;
       if (content) content.classList.add('visible');
-      acts[actName].visible = true;
       actCounter.textContent = actLabels[actName] || '';
-      if (actLabels[actName]) actCounter.classList.add('visible');
-      else actCounter.classList.remove('visible');
+      actCounter.classList.toggle('visible', !!actLabels[actName]);
     },
-    onLeave: () => {
-      if (content) content.classList.remove('visible');
-    },
+    onLeave: () => { if (content) content.classList.remove('visible'); },
     onEnterBack: () => {
-      currentAct = actName;
+      activeAct = actName;
       if (content) content.classList.add('visible');
-      acts[actName].visible = true;
       actCounter.textContent = actLabels[actName] || '';
-      if (actLabels[actName]) actCounter.classList.add('visible');
-      else actCounter.classList.remove('visible');
+      actCounter.classList.toggle('visible', !!actLabels[actName]);
     },
-    onLeaveBack: () => {
-      if (content) content.classList.remove('visible');
-    }
+    onLeaveBack: () => { if (content) content.classList.remove('visible'); }
   });
 });
 
-// Global scroll progress for the progress bar
+// Global progress
 ScrollTrigger.create({
   trigger: '#scroll-container',
   start: 'top top',
   end: 'bottom bottom',
-  onUpdate: (self) => {
-    progressBar.style.width = (self.progress * 100) + '%';
-  }
+  onUpdate: (self) => { progressBar.style.width = (self.progress * 100) + '%'; }
 });
 
-// ── ANIMATION LOOP ──
-function animateActObjects(actName, progress) {
+// ── ANIMATION ENGINE ──
+// Only the ACTIVE act is visible. Use a target opacity that lerps smoothly.
+const actOpacity = {};
+actNames.forEach(n => actOpacity[n] = 0);
+
+function animateAct(actName) {
   const g = acts[actName];
-  if (!g || !g.visible) return;
+  if (!g) return;
 
-  const p = Math.max(0, Math.min(1, progress));
+  const isActive = (actName === activeAct);
+  const targetOp = isActive ? 1 : 0;
+  actOpacity[actName] = THREE.MathUtils.lerp(actOpacity[actName], targetOp, 0.08);
+  const vis = actOpacity[actName];
 
-  // Common: scale children in progressively
+  // Offset group position to the 3D side of the screen
+  const side = get3DSide(actName);
+  const offX = side === 'right' ? 4 : side === 'left' ? -4 : 0;
+  g.position.x = THREE.MathUtils.lerp(g.position.x, offX, 0.05);
+
+  if (vis < 0.005) {
+    g.children.forEach(c => c.scale.setScalar(0));
+    g.visible = false;
+    return;
+  }
+
+  g.visible = true;
   const children = g.children;
   const count = children.length;
 
-  children.forEach((child, i) => {
-    const threshold = i / count;
-    const childProgress = Math.max(0, Math.min(1, (p - threshold * 0.5) / 0.5));
+  // Build-up: use per-act scroll progress to stagger element entry
+  const p = Math.max(0, Math.min(1, actProgress[actName]));
+  const buildP = Math.max(0, Math.min(1, (p - 0.02) / 0.5));
 
-    // Scale animation
-    const targetScale = childProgress;
+  children.forEach((child, i) => {
+    const staggerStart = (i / count) * 0.3;
+    const childBuild = Math.max(0, Math.min(1, (buildP - staggerStart) / 0.45));
+    const eased = 1 - Math.pow(1 - childBuild, 3);
+
+    // Scale = build * visibility
+    const targetScale = eased * vis;
     child.scale.setScalar(THREE.MathUtils.lerp(child.scale.x, targetScale, 0.1));
 
-    // Vertical offset for "exploding in" effect
-    if (child.isMesh || child.isLineSegments || child.isLine) {
-      const baseY = child.userData.baseY !== undefined ? child.userData.baseY : child.position.y;
-      if (child.userData.baseY === undefined) child.userData.baseY = child.position.y;
-      const offset = (1 - childProgress) * 3;
-      child.position.y = baseY + offset;
-    }
+    // Vertical entry
+    if (child.userData.baseY === undefined) child.userData.baseY = child.position.y;
+    child.position.y = child.userData.baseY + (1 - eased) * 2;
   });
 
-  // Group-level gentle rotation synced to scroll
-  g.rotation.y = THREE.MathUtils.lerp(g.rotation.y, p * 0.4 - 0.2, 0.05);
-}
-
-// Hide acts that are not in view
-function updateActVisibility() {
-  actNames.forEach(name => {
-    const p = actProgress[name];
-    if (p <= 0 || p >= 1) {
-      // Fade out
-      acts[name].children.forEach(child => {
-        child.scale.setScalar(THREE.MathUtils.lerp(child.scale.x, 0, 0.08));
-      });
-      if (p <= 0) {
-        setTimeout(() => { if (actProgress[name] <= 0) acts[name].visible = false; }, 300);
-      }
-    }
-  });
+  // Gentle tilt
+  g.rotation.y = THREE.MathUtils.lerp(g.rotation.y, (p - 0.5) * 0.2, 0.03);
 }
 
 // ── RENDER LOOP ──
 let time = 0;
-function animate() {
-  requestAnimationFrame(animate);
-  time += 0.01;
+function render() {
+  requestAnimationFrame(render);
+  time += 0.008;
 
-  // Animate current and nearby acts
+  // Animate all acts (only active one fades in, others fade out)
   actNames.forEach(name => {
-    if (acts[name].visible) {
-      animateActObjects(name, actProgress[name]);
-    }
+    animateAct(name);
   });
-
-  updateActVisibility();
 
   // Hero photon pulse
   if (acts.hero.visible && acts.hero.userData.photon) {
-    const pulse = 0.8 + Math.sin(time * 3) * 0.2;
+    const pulse = 0.7 + Math.sin(time * 4) * 0.3;
     acts.hero.userData.photon.scale.setScalar(pulse);
   }
 
+  controls.update();
   renderer.render(scene, camera);
 }
-animate();
+render();
 
 // ── RESIZE ──
 window.addEventListener('resize', () => {
-  const w = window.innerWidth;
-  const h = window.innerHeight;
-  const a = w / h;
+  const w = window.innerWidth, h = window.innerHeight, a = w / h;
   camera.left = -frustum * a;
   camera.right = frustum * a;
-  camera.top = frustum;
-  camera.bottom = -frustum;
   camera.updateProjectionMatrix();
   renderer.setSize(w, h);
 });
 
-// ── INITIAL STATE ──
+// ── INIT ──
 acts.hero.visible = true;
-acts.hero.children.forEach(c => c.scale.setScalar(1));
 </script>
 </body>
 </html>
